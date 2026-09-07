@@ -31,6 +31,7 @@
          top position and center the Kimi Code brand; since it is centered it
          naturally clears the left traffic-light buttons. */
       .side .ch {
+        padding-left: 24px !important;
         -webkit-app-region: drag !important;
       }
       .side .ch .ch-brand {
