@@ -2,9 +2,15 @@
 (function () {
   'use strict';
 
-  // ── Anti-flicker CSS ───────────────────────────────────────────────────────
+  // ── Anti-flicker CSS + dark title-bar background ───────────────────────────
+  // Set the root background as early as possible so the macOS overlay title
+  // bar never has a white strip to show while the page is loading.
+  document.documentElement.style.backgroundColor = '#0d0f12';
+  if (document.body) document.body.style.backgroundColor = '#0d0f12';
+
   const style = document.createElement('style');
   style.textContent = `
+    html, body { background-color: #0d0f12 !important; }
     *, *::before, *::after {
       scroll-behavior: auto !important;
       overscroll-behavior: none !important;

@@ -148,16 +148,16 @@ async fn create_or_show_window(app: &tauri::AppHandle, url: &str) -> Result<(), 
             .min_inner_size(800.0, 600.0)
             .resizable(true)
             .center()
+            .theme(Some(tauri::Theme::Dark))
+            .background_color(tauri::window::Color(13, 15, 18, 255))
             .initialization_script(init_script);
 
-        // On macOS make the title bar transparent and set a dark background
-        // color so it blends with the Kimi Code dark theme instead of staying
-        // white.
+        // On macOS draw the title bar as a transparent overlay over the
+        // webview content so it takes on the dark background instead of
+        // rendering a white strip.
         #[cfg(target_os = "macos")]
         {
-            builder = builder
-                .title_bar_style(tauri::TitleBarStyle::Transparent)
-                .background_color(tauri::window::Color(13, 15, 18, 255));
+            builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay);
         }
 
         builder.build().map_err(|e| e.to_string())?;
