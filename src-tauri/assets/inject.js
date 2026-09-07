@@ -28,11 +28,14 @@
       }
 
       /* macOS overlay titlebar: keep the sidebar brand header at its natural
-         top position but push it right so the Kimi Code logo clears the
-         native traffic-light buttons. */
+         top position, clear the traffic lights on the left, and center the
+         Kimi Code brand in the available header space. */
       .side .ch {
-        padding-left: 100px !important;
+        padding-left: 90px !important;
         -webkit-app-region: drag !important;
+      }
+      .side .ch .ch-brand {
+        justify-content: center !important;
       }
       .side .ch button,
       .side .ch input {
