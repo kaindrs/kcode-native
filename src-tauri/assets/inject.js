@@ -27,10 +27,10 @@
         -webkit-overflow-scrolling: auto !important;
       }
 
-      /* macOS overlay titlebar: move the sidebar brand header down/right so
-         the Kimi Code logo clears the native traffic-light buttons. */
+      /* macOS overlay titlebar: keep the sidebar brand header at its natural
+         top position but push it right so the Kimi Code logo clears the
+         native traffic-light buttons. */
       .side .ch {
-        margin-top: 24px !important;
         padding-left: 100px !important;
         -webkit-app-region: drag !important;
       }
