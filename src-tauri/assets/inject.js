@@ -30,8 +30,8 @@
       /* macOS overlay titlebar: move the sidebar brand header down/right so
          the Kimi Code logo clears the native traffic-light buttons. */
       .side .ch {
-        margin-top: 38px !important;
-        padding-left: 80px !important;
+        margin-top: 24px !important;
+        padding-left: 100px !important;
         -webkit-app-region: drag !important;
       }
       .side .ch button,
