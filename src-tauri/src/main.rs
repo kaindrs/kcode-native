@@ -141,7 +141,7 @@ async fn create_or_show_window(app: &tauri::AppHandle, url: &str) -> Result<(), 
         win.set_focus().map_err(|e| e.to_string())?;
         win.navigate(parsed).map_err(|e| e.to_string())?;
     } else {
-        let init_script = include_str!("../assets/inject.js");
+        let init_script: std::sync::Arc<str> = include_str!("../assets/inject.js").into();
         let mut builder = WebviewWindowBuilder::new(app, WINDOW_LABEL, WebviewUrl::External(parsed))
             .title("KCode")
             .inner_size(1400.0, 900.0)
@@ -149,8 +149,7 @@ async fn create_or_show_window(app: &tauri::AppHandle, url: &str) -> Result<(), 
             .resizable(true)
             .center()
             .theme(Some(tauri::Theme::Dark))
-            .background_color(tauri::window::Color(13, 15, 18, 255))
-            .initialization_script(init_script);
+            .background_color(tauri::window::Color(13, 15, 18, 255));
 
         // On macOS keep the native traffic lights but draw them as a
         // transparent overlay over the webview content. Hide the window
@@ -162,7 +161,13 @@ async fn create_or_show_window(app: &tauri::AppHandle, url: &str) -> Result<(), 
                 .hidden_title(true);
         }
 
-        builder.build().map_err(|e| e.to_string())?;
+        let win = builder.build().map_err(|e| e.to_string())?;
+
+        // Inject runtime fixes once the Kimi web UI has had time to render.
+        std::thread::spawn(move || {
+            std::thread::sleep(std::time::Duration::from_millis(1500));
+            let _ = win.eval(&*init_script);
+        });
     }
     Ok(())
 }

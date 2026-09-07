@@ -2,32 +2,64 @@
 (function () {
   'use strict';
 
-  // ── Anti-flicker CSS + dark title-bar background ───────────────────────────
-  // Set the root background as early as possible so the macOS overlay title
-  // bar never has a white strip to show while the page is loading.
-  document.documentElement.style.backgroundColor = '#0d0f12';
-  if (document.body) document.body.style.backgroundColor = '#0d0f12';
+  function setRootBackground() {
+    if (document.documentElement) {
+      document.documentElement.style.backgroundColor = '#0d0f12';
+    }
+    if (document.body) {
+      document.body.style.backgroundColor = '#0d0f12';
+    }
+  }
 
-  const style = document.createElement('style');
-  style.textContent = `
-    html, body { background-color: #0d0f12 !important; }
-    *, *::before, *::after {
-      scroll-behavior: auto !important;
-      overscroll-behavior: none !important;
-    }
-    html, body, #app, main, [role="main"], [role="log"],
-    [class*="scroll" i], [class*="chat" i], [class*="message" i] {
-      -webkit-overflow-scrolling: auto !important;
-    }
+  function injectStyles() {
+    if (document.getElementById('kcode-native-styles')) return;
 
-    /* macOS overlay titlebar: push the app content down so the brand/logo
-       clears the native traffic-light window buttons. */
-    #app {
-      box-sizing: border-box !important;
-      padding-top: 38px !important;
+    const style = document.createElement('style');
+    style.id = 'kcode-native-styles';
+    style.textContent = `
+      html, body { background-color: #0d0f12 !important; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        overscroll-behavior: none !important;
+      }
+      html, body, #app, main, [role="main"], [role="log"],
+      [class*="scroll" i], [class*="chat" i], [class*="message" i] {
+        -webkit-overflow-scrolling: auto !important;
+      }
+
+      /* macOS overlay titlebar: move the sidebar brand header down/right so
+         the Kimi Code logo clears the native traffic-light buttons. */
+      .side .ch {
+        margin-top: 38px !important;
+        padding-left: 80px !important;
+        -webkit-app-region: drag !important;
+      }
+      .side .ch button,
+      .side .ch input {
+        -webkit-app-region: no-drag !important;
+      }
+    `;
+
+    const target = document.head || document.documentElement;
+    if (target) {
+      target.appendChild(style);
     }
-  `;
-  document.head.appendChild(style);
+  }
+
+  // Apply as early as possible, then guarantee styles are injected once the
+  // DOM (and therefore <head>) is available.
+  setRootBackground();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function onLoad() {
+      document.removeEventListener('DOMContentLoaded', onLoad);
+      setRootBackground();
+      injectStyles();
+    });
+  } else {
+    setRootBackground();
+    injectStyles();
+  }
 
   // ── Normalize scroll calls to instant behavior ─────────────────────────────
   function normalizeScrollArg(arg) {
