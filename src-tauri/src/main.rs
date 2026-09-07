@@ -142,15 +142,25 @@ async fn create_or_show_window(app: &tauri::AppHandle, url: &str) -> Result<(), 
         win.navigate(parsed).map_err(|e| e.to_string())?;
     } else {
         let init_script = include_str!("../assets/inject.js");
-        WebviewWindowBuilder::new(app, WINDOW_LABEL, WebviewUrl::External(parsed))
+        let mut builder = WebviewWindowBuilder::new(app, WINDOW_LABEL, WebviewUrl::External(parsed))
             .title("KCode")
             .inner_size(1400.0, 900.0)
             .min_inner_size(800.0, 600.0)
             .resizable(true)
             .center()
-            .initialization_script(init_script)
-            .build()
-            .map_err(|e| e.to_string())?;
+            .initialization_script(init_script);
+
+        // On macOS make the title bar transparent and set a dark background
+        // color so it blends with the Kimi Code dark theme instead of staying
+        // white.
+        #[cfg(target_os = "macos")]
+        {
+            builder = builder
+                .title_bar_style(tauri::TitleBarStyle::Transparent)
+                .background_color(tauri::window::Color(13, 15, 18, 255));
+        }
+
+        builder.build().map_err(|e| e.to_string())?;
     }
     Ok(())
 }
