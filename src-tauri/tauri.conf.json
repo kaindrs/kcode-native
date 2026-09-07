@@ -31,7 +31,8 @@
       "frameworks": [],
       "minimumSystemVersion": "13.0",
       "signingIdentity": "-",
-      "entitlements": null
+      "entitlements": null,
+      "infoPlist": "Info.plist"
     }
   },
   "plugins": {}

@@ -19,6 +19,13 @@
     [class*="scroll" i], [class*="chat" i], [class*="message" i] {
       -webkit-overflow-scrolling: auto !important;
     }
+
+    /* macOS overlay titlebar: push the app content down so the brand/logo
+       clears the native traffic-light window buttons. */
+    #app {
+      box-sizing: border-box !important;
+      padding-top: 38px !important;
+    }
   `;
   document.head.appendChild(style);
 

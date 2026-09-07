@@ -152,12 +152,14 @@ async fn create_or_show_window(app: &tauri::AppHandle, url: &str) -> Result<(), 
             .background_color(tauri::window::Color(13, 15, 18, 255))
             .initialization_script(init_script);
 
-        // On macOS draw the title bar as a transparent overlay over the
-        // webview content so it takes on the dark background instead of
-        // rendering a white strip.
+        // On macOS keep the native traffic lights but draw them as a
+        // transparent overlay over the webview content. Hide the window
+        // title text so there is no visible title bar.
         #[cfg(target_os = "macos")]
         {
-            builder = builder.title_bar_style(tauri::TitleBarStyle::Overlay);
+            builder = builder
+                .title_bar_style(tauri::TitleBarStyle::Overlay)
+                .hidden_title(true);
         }
 
         builder.build().map_err(|e| e.to_string())?;
