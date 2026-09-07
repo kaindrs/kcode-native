@@ -1,0 +1,17 @@
+{
+  "name": "kcode-native",
+  "version": "1.0.0",
+  "description": "Native cross-platform KCode app for Kimi Code — built with Tauri",
+  "private": true,
+  "scripts": {
+    "dev": "cargo tauri dev",
+    "build": "cargo tauri build",
+    "icon": "cargo tauri icon assets/icon.png"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaindrs/kcode-native.git"
+  },
+  "author": "kaindrs",
+  "license": "MIT"
+}
