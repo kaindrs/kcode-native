@@ -34,7 +34,7 @@
       }
       .side .ch .ch-brand {
         justify-content: center !important;
-        margin-left: 10px !important;
+        margin-left: 25px !important;
       }
       .side .ch button,
       .side .ch input {
