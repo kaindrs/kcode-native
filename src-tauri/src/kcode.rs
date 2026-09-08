@@ -38,7 +38,7 @@ impl KcodeServer {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .map_err(|e| format!("failed to start {} web: {}", cli, e))?;
+            .map_err(|e| format!("failed to start {} web: {}", cli.display(), e))?;
 
         let stdout = child
             .stdout
@@ -107,13 +107,31 @@ async fn is_server_running(port: u16) -> bool {
 }
 
 /// Discover the local coding-agent CLI: prefer upstream kimi, then AXIOM acode.
-fn resolve_cli() -> Option<String> {
+/// GUI apps do not inherit the user's shell $PATH, so check known install
+/// locations before falling back to PATH.
+fn resolve_cli() -> Option<PathBuf> {
+    let home = dirs::home_dir().unwrap_or_default();
+    let known = [
+        home.join(".kimi-code/bin/kimi"),
+        home.join(".local/bin/kimi"),
+        PathBuf::from("/usr/local/bin/kimi"),
+        PathBuf::from("/opt/homebrew/bin/kimi"),
+        home.join(".axiom/bin/acode"),
+        home.join(".local/bin/acode"),
+        PathBuf::from("/usr/local/bin/acode"),
+        PathBuf::from("/opt/homebrew/bin/acode"),
+    ];
+    for p in known {
+        if p.is_file() {
+            return Some(p);
+        }
+    }
     for bin in ["kimi", "acode"] {
-        if std::env::split_paths(&std::env::var("PATH").unwrap_or_default())
-            .map(|p| p.join(bin))
-            .any(|p| p.is_file())
+        if let Some(p) = std::env::split_paths(&std::env::var("PATH").unwrap_or_default())
+            .map(|d| d.join(bin))
+            .find(|p| p.is_file())
         {
-            return Some(bin.to_string());
+            return Some(p);
         }
     }
     None
