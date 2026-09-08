@@ -7,6 +7,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+    webview::PageLoadEvent,
     Manager, RunEvent, WebviewUrl, WebviewWindowBuilder,
 };
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
@@ -161,13 +162,15 @@ async fn create_or_show_window(app: &tauri::AppHandle, url: &str) -> Result<(), 
                 .hidden_title(true);
         }
 
-        let win = builder.build().map_err(|e| e.to_string())?;
-
-        // Inject runtime fixes once the Kimi web UI has had time to render.
-        std::thread::spawn(move || {
-            std::thread::sleep(std::time::Duration::from_millis(1500));
-            let _ = win.eval(&*init_script);
+        // Inject runtime fixes on every page load (initial load and manual reloads).
+        let init_script_for_load = init_script.clone();
+        builder = builder.on_page_load(move |window, payload| {
+            if payload.event() == PageLoadEvent::Finished {
+                let _ = window.eval(&*init_script_for_load);
+            }
         });
+
+        let _win = builder.build().map_err(|e| e.to_string())?;
     }
     Ok(())
 }
