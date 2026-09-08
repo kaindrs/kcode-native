@@ -27,9 +27,8 @@
         -webkit-overflow-scrolling: auto !important;
       }
 
-      /* macOS overlay titlebar: keep the sidebar brand header at its natural
-         top position and center the Kimi Code brand; since it is centered it
-         naturally clears the left traffic-light buttons. */
+      /* macOS overlay titlebar: center the sidebar brand header so the
+         Kimi Code logo clears the native traffic-light buttons. */
       .side .ch {
         -webkit-app-region: drag !important;
       }
